@@ -46,6 +46,13 @@ public class BlockDefsExtension extends BaseExtension
 		isInGameCenter = false;
 		
 		SW.get().getEngineExtensionManager().getExtensionBlocks().addListener(event -> {
+			
+			if(Game.noGameOpened())
+			{
+				loadedDefinitionAdditions.clear();
+				return;
+			}
+			
 			for(ExtensionInstance inst : Game.getGame().getExtensions().values())
 			{
 				String extensionID = inst.getExtensionID();
