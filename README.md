@@ -26,7 +26,7 @@ Here's an example of creating our own version of the inline code block. We defin
 </blocks>
 ```
 
-Then, we add a new file, `blocks-enhacements.xml`, alongside `blocks.xml`. Here, we specify which block and which field to overwrite with the `code` type.
+Then, we add a new file, `blocks-enhancements.xml`, alongside `blocks.xml`. Here, we specify which block and which field to overwrite with the `code` type.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
