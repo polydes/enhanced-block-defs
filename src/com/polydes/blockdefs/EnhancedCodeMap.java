@@ -17,7 +17,7 @@ public class EnhancedCodeMap implements CodeElement
 	
 	public EnhancedCodeMap(Definition baseDef, DefinitionAdditions additions)
 	{
-		this.codeBase = (CodeElementList) ((BasicCodeMap) baseDef.codeGenerator).getCode();
+		this.codeBase = CodeElementList.asList(((BasicCodeMap) baseDef.codeGenerator).getCode());
 		
 		if(!additions.fieldReplacements.isEmpty())
 		{
