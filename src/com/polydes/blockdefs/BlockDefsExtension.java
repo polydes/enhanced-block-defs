@@ -47,6 +47,7 @@ public class BlockDefsExtension extends BaseExtension
 		
 		SW.get().getEngineExtensionManager().getExtensionBlocks().addListener(event -> {
 			
+			//If a game is being closed, the extension blocks map will be updated after setting the game to null.
 			if(Game.noGameOpened())
 			{
 				loadedDefinitionAdditions.clear();
