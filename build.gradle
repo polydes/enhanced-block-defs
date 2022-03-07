@@ -1,0 +1,79 @@
+plugins {
+	id 'eclipse'
+	id 'java-library'
+}
+
+java {
+	toolchain {
+        languageVersion.set(JavaLanguageVersion.of(16))
+    }
+}
+
+group = 'com.polydes'
+version = rootProject.file('version.txt').text.trim()
+
+sourceSets {
+	main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
+
+processResources {
+    from('res') {
+    	into 'res/com/polydes/blockdefs'
+    }
+    from('icon.png') {
+        into 'com/polydes/blockdefs/res'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://www.stencyl.com/dl/maven2/releases"
+    }
+    maven {
+        url "https://www.stencyl.com/dl/maven2/snapshots"
+    }
+}
+
+dependencies {
+	//Stencyl and its dependencies
+    implementation enforcedPlatform('com.stencyl:stencyl-platform:4.0.2')
+    compileOnly group: 'com.stencyl', name: 'stencyl', version: '4.0.2'
+    compileOnly group: 'log4j',       name: 'log4j'
+}
+
+jar {
+	from {
+		configurations.runtimeClasspath.collect { zipTree(it) }
+	}
+    manifest {
+		attributes(
+			"Extension-ID": "com.polydes.blockdefs",
+			"Extension-Main-Class": "com.polydes.blockdefs.BlockDefsExtension",
+			"Extension-Version": version,
+			"Extension-Icon": "com/polydes/blockdefs/res/icon.png",
+			"Extension-Dependencies": "stencyl-4.0.2",
+			"Extension-Type": "normal",
+			"Extension-Name": "Enhanced Block Definitions",
+			"Extension-Description": "Adds to engine extension's block definition capabilities.",
+			"Extension-Author": "Justin Espedal",
+			"Extension-Website": "www.polydes.com",
+			"Extension-Repository": "http://www.polydes.com/repo",
+			"Extension-Internal-Version": "1"
+		)
+	}
+}
+
+tasks.register('installToolsetToWorkspace', Copy) {
+    from(tasks.named("jar"))
+	into stencylWorkspace+"/extensions"
+	rename { fileName -> "com.polydes.blockdefs.jar" }
+}
+
+tasks.register('installToWorkspace') {
+	dependsOn 'installToolsetToWorkspace'
+}
