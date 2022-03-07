@@ -15,7 +15,6 @@ import org.w3c.dom.Element;
 import com.polydes.common.io.XML;
 
 import stencyl.core.lib.Game;
-import stencyl.sw.SW;
 import stencyl.sw.editors.game.advanced.ExtensionInstance;
 import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.Definitions.DefinitionMap;
@@ -44,55 +43,6 @@ public class BlockDefsExtension extends BaseExtension
 		
 		isInMenu = false;
 		isInGameCenter = false;
-		
-		SW.get().getEngineExtensionManager().getExtensionBlocks().addListener(event -> {
-			
-			//If a game is being closed, the extension blocks map will be updated after setting the game to null.
-			if(Game.noGameOpened())
-			{
-				loadedDefinitionAdditions.clear();
-				return;
-			}
-			
-			for(ExtensionInstance inst : Game.getGame().getExtensions().values())
-			{
-				String extensionID = inst.getExtensionID();
-				if(inst.isEnabled())
-				{
-					if(!loadedDefinitionAdditions.containsKey(extensionID) && SW.get().getEngineExtensionManager().getExtensionBlocks().containsKey(extensionID))
-					{
-						loadedDefinitionAdditions.put(extensionID, new HashMap<>());
-						File extensionRoot = new File(Locations.getGameExtensionLocation(extensionID));
-						File enhancements = new File(extensionRoot, "blocks-enhancements.xml");
-						if(enhancements.exists())
-						{
-							try
-							{
-								Element e = FileHelper.readXMLFromFile(enhancements).getDocumentElement();
-								loadEnhancements(extensionID, e);
-								
-								DefinitionMap loadedDefs = SW.get().getEngineExtensionManager().getExtensionBlocks().get(extensionID);
-								if(!loadedDefs.isEmpty())
-									applyEnhancements(extensionID, loadedDefs);
-								loadedDefs.addListener(blocksChangedEvent -> {
-									applyEnhancements(extensionID, loadedDefs);
-								});
-							}
-							catch(IOException e)
-							{
-								log.error(e.getMessage(), e);
-							}
-						}
-					}
-				}
-				else
-				{
-					loadedDefinitionAdditions.remove(extensionID);
-				}
-			}
-			
-			
-		});
 	}
 	
 	private void loadEnhancements(String extensionID, Element enhancements)
@@ -168,6 +118,49 @@ public class BlockDefsExtension extends BaseExtension
 	@Override
 	public void onGameOpened(Game game)
 	{
+		loadedDefinitionAdditions.clear();
+		
+		var extensions = game.getExtensionManager().getLoadedEnabledExtensions();
+		extensions.addListener(event -> {
+			
+			for(ExtensionInstance inst : extensions.values())
+			{
+				String extensionID = inst.getExtensionID();
+				if(inst.isEnabled())
+				{
+					if(!loadedDefinitionAdditions.containsKey(extensionID) && inst.getBlocks() != null)
+					{
+						loadedDefinitionAdditions.put(extensionID, new HashMap<>());
+						File extensionRoot = new File(Locations.getGameExtensionLocation(extensionID));
+						File enhancements = new File(extensionRoot, "blocks-enhancements.xml");
+						if(enhancements.exists())
+						{
+							try
+							{
+								Element e = FileHelper.readXMLFromFile(enhancements).getDocumentElement();
+								loadEnhancements(extensionID, e);
+								
+								DefinitionMap loadedDefs = inst.getBlocks();
+								if(!loadedDefs.isEmpty())
+									applyEnhancements(extensionID, loadedDefs);
+								loadedDefs.addListener(blocksChangedEvent -> {
+									applyEnhancements(extensionID, loadedDefs);
+								});
+							}
+							catch(IOException e)
+							{
+								log.error(e.getMessage(), e);
+							}
+						}
+					}
+				}
+				else
+				{
+					loadedDefinitionAdditions.remove(extensionID);
+				}
+			}
+			
+		});
 	}
 
 	/*
@@ -176,6 +169,7 @@ public class BlockDefsExtension extends BaseExtension
 	@Override
 	public void onGameClosed(Game game)
 	{
+		loadedDefinitionAdditions.clear();
 	}
 	
 	/*
