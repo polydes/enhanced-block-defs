@@ -61,7 +61,7 @@ jar {
 			"Extension-Name": "Enhanced Block Definitions",
 			"Extension-Description": "Adds to engine extension's block definition capabilities.",
 			"Extension-Author": "Justin Espedal",
-			"Extension-Website": "www.polydes.com",
+			"Extension-Website": "http://www.polydes.com/repo/toolset/com.polydes.blockdefs",
 			"Extension-Repository": "http://www.polydes.com/repo",
 			"Extension-Internal-Version": "1"
 		)

@@ -1,43 +1,28 @@
+<div align="center">
+
 # Enhanced Block Definitions
 
-This extension provides additional capabilities to engine extension blocks.
+[Website/Releases](http://www.polydes.com/repo/toolset/com.polydes.blockdefs) |
+[Issues](https://github.com/polydes/enhanced-block-defs/issues)
 
-Currently, this extension only provides the ability to use a `code` field type that accepts text input which is treated as pure code.
+</div>
 
-Here's an example of creating our own version of the inline code block. We define the block as normal in `blocks.xml`, but for the field type, `text` is specified.
+This [Stencyl](https://www.stencyl.com/) extension provides additional capabilities to engine extension blocks.
 
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<blocks>
-	
-	<block
-		tag="our-code-short"
-		spec="Code: %0"
-		help="Run arbitrary (Haxe) code."
-		code='~'
-		type="normal"
-		color="gray"
-		returns="anything">
-		<fields>
-			<text order="0" /> <!-- code: see blocks-enhancements.xml -->
-		</fields>
-	</block>
-	
-</blocks>
-```
+## Using this Stencyl extension
 
-Then, we add a new file, `blocks-enhancements.xml`, alongside `blocks.xml`. Here, we specify which block and which field to overwrite with the `code` type.
+This is a free extension. Installation instructions and guides can be found [here](http://www.polydes.com/repo/toolset/com.polydes.blockdefs/).
 
-```xml
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<blocks-enhancements>
-	
-	<block
-		tag="our-code-short">
-		<fields>
-			<code order="0" />
-		</fields>
-	</block>
-	
-</blocks-enhancements>
-```
+## Credits
+
+[Justin Espedal](https://github.com/justin-espedal): 💻code 📖documentation
+
+## Contributing
+
+- Writing code: Please see the [development guide](docs/development_guide.md).
+- Reporting bugs/suggesting features: [Create an issue](https://github.com/polydes/enhanced-block-defs/issues) on Github.
+- Financial support: Donations are accepted at [Patreon](https://www.patreon.com/justin_espedal).
+
+## License
+
+©️ 2020-2022 Justin Espedal. The content of this repository, unless otherwise specified, is made available under the [MIT](https://tldrlegal.com/license/mit-license) license.
