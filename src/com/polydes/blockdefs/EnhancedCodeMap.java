@@ -2,6 +2,8 @@ package com.polydes.blockdefs;
 
 import java.util.Map.Entry;
 
+import stencyl.core.lib.attribute.AttributeType;
+import stencyl.core.lib.attribute.AttributeTypes;
 import stencyl.sw.editors.snippet.designer.Definition;
 import stencyl.sw.editors.snippet.designer.codebuilder.CodeBuilder;
 import stencyl.sw.editors.snippet.designer.codebuilder.CodeElement;
@@ -22,11 +24,23 @@ public class EnhancedCodeMap implements CodeElement
 		if(!additions.fieldReplacements.isEmpty())
 		{
 			fieldReplacements = new String[baseDef.fields.length];
+			boolean madeSpecialReplacement = false;
 			
 			for(Entry<Integer, String> fr : additions.fieldReplacements.entrySet())
 			{
-				this.fieldReplacements[fr.getKey()] = fr.getValue();
+				if(fr.getValue().equals("code"))
+				{
+					baseDef.fields[fr.getKey()] = AttributeTypes.CODE;
+				}
+				else
+				{
+					this.fieldReplacements[fr.getKey()] = fr.getValue();
+					madeSpecialReplacement = true;
+				}
 			}
+			
+			if(!madeSpecialReplacement)
+				fieldReplacements = null;
 		}
 	}
 
@@ -43,7 +57,6 @@ public class EnhancedCodeMap implements CodeElement
 		else
 		{
 			Definition def = builder.peekBlock().getDefinition();
-			String realTag = def.tag;
 			for(CodeElement e : codeBase)
 			{
 				int fieldIndex = -1;
@@ -56,9 +69,10 @@ public class EnhancedCodeMap implements CodeElement
 				
 				if(fieldIndex != -1 && fieldReplacements[fieldIndex] != null && fieldReplacements[fieldIndex].equals("code"))
 				{
-					def.tag = "code-short";
+					AttributeType realType = def.fields[fieldIndex];
+					def.fields[fieldIndex] = AttributeTypes.CODE;
 					e.toCode(builder);
-					def.tag = realTag;
+					def.fields[fieldIndex] = realType;
 					continue;
 				}
 				
