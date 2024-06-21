@@ -121,46 +121,41 @@ public class BlockDefsExtension extends BaseExtension
 		loadedDefinitionAdditions.clear();
 		
 		var extensions = game.getExtensionManager().getLoadedEnabledExtensions();
-		extensions.addListener(event -> {
-			
-			for(ExtensionInstance inst : extensions.values())
+		refreshLoadedExtensions(extensions);
+		extensions.addListener(event -> refreshLoadedExtensions(extensions));
+	}
+	
+	private void refreshLoadedExtensions(Map<String, ExtensionInstance> extensions)
+	{
+		for(ExtensionInstance inst : extensions.values())
+		{
+			String extensionID = inst.getExtensionID();
+			if(!loadedDefinitionAdditions.containsKey(extensionID) && inst.getBlocks() != null)
 			{
-				String extensionID = inst.getExtensionID();
-				if(inst.isEnabled())
+				loadedDefinitionAdditions.put(extensionID, new HashMap<>());
+				File extensionRoot = new File(Locations.getGameExtensionLocation(extensionID));
+				File enhancements = new File(extensionRoot, "blocks-enhancements.xml");
+				if(enhancements.exists())
 				{
-					if(!loadedDefinitionAdditions.containsKey(extensionID) && inst.getBlocks() != null)
+					try
 					{
-						loadedDefinitionAdditions.put(extensionID, new HashMap<>());
-						File extensionRoot = new File(Locations.getGameExtensionLocation(extensionID));
-						File enhancements = new File(extensionRoot, "blocks-enhancements.xml");
-						if(enhancements.exists())
-						{
-							try
-							{
-								Element e = FileHelper.readXMLFromFile(enhancements).getDocumentElement();
-								loadEnhancements(extensionID, e);
-								
-								DefinitionMap loadedDefs = inst.getBlocks();
-								if(!loadedDefs.isEmpty())
-									applyEnhancements(extensionID, loadedDefs);
-								loadedDefs.addListener(blocksChangedEvent -> {
-									applyEnhancements(extensionID, loadedDefs);
-								});
-							}
-							catch(IOException e)
-							{
-								log.error(e.getMessage(), e);
-							}
-						}
+						Element e = FileHelper.readXMLFromFile(enhancements).getDocumentElement();
+						loadEnhancements(extensionID, e);
+						
+						DefinitionMap loadedDefs = inst.getBlocks();
+						if(!loadedDefs.isEmpty())
+							applyEnhancements(extensionID, loadedDefs);
+						loadedDefs.addListener(blocksChangedEvent -> {
+							applyEnhancements(extensionID, loadedDefs);
+						});
+					}
+					catch(IOException e)
+					{
+						log.error(e.getMessage(), e);
 					}
 				}
-				else
-				{
-					loadedDefinitionAdditions.remove(extensionID);
-				}
 			}
-			
-		});
+		}
 	}
 
 	/*
