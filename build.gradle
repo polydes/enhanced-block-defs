@@ -10,7 +10,7 @@ java {
 }
 
 group = 'com.polydes'
-version = rootProject.file('version.txt').text.trim()
+version = project.file('version.txt').text.trim()
 
 sourceSets {
 	main {
