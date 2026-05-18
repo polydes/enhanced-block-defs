@@ -1,3 +1,6 @@
+> [!WARNING]
+> This repository is archived. The functionality provided by this extension is included in Stencyl 4.1.
+
 <div align="center">
 
 # Enhanced Block Definitions
